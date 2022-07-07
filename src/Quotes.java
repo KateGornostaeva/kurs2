@@ -26,7 +26,14 @@ public class Quotes extends JFrame {
                 settings.setVisible(true);
             }
         });
-
+        buttonWrite.addActionListener(new ActionListener() {//нажимаешь на "написать цитату"
+            // и перебрасывает в окно с цитатами
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WriteQuote writeQuote = new WriteQuote(self);
+                writeQuote.setVisible(true);
+            }
+        });
 
         Container container = this.getContentPane();
         container.setLayout(new GridLayout(5, 2, 2, 2));
