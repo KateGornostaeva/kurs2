@@ -15,9 +15,10 @@ public class Login extends JDialog {
 
     public Login(Frame parent) throws HeadlessException {
         super(parent, "Авторизация", true);
-        this.setBounds(100, 100, 350, 150);
+        this.setBounds(150, 150, 350, 200);
 
-        buttonOK.addActionListener(new ActionListener() {
+        buttonOK.addActionListener(new ActionListener() { //нажимаешь на "ок"
+            // и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO проверить авторизацию
@@ -25,12 +26,21 @@ public class Login extends JDialog {
                 dispose();
             }
         });
-        buttonReg.addActionListener(new ActionListener() {
+        buttonGuest.addActionListener(new ActionListener() {//нажимаешь на "войти как гость"
+            // и перебрасывает в окно с цитатами
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO проверить авторизацию
+                succeeded = true;
+                dispose();
+            }
+        });
+        buttonReg.addActionListener(new ActionListener() {//нажимаешь на "регистрацию" и перебрасывает
+            // в окно для регистрации
             @Override
             public void actionPerformed(ActionEvent e) {
                 Registration reg = new Registration(parent);
                 reg.setVisible(true);
-                dispose();
             }
         });
 

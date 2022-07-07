@@ -3,5 +3,6 @@ public class Main {
 
         Quotes quotes = new Quotes();
         quotes.setVisible(true);
+        quotes.start();
     }
 }
