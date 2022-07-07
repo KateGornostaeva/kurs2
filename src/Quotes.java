@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class Quotes extends JFrame {
     private JLabel l1 = new JLabel("Логин:");
@@ -45,10 +46,27 @@ public class Quotes extends JFrame {
 
     }
 
-    public void start() {
+    public void start() throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        System.out.println("");
+
         Login login = new Login(this);
         login.setVisible(true);
     }
 
+    private Connection getConnection() { //подключение к БД
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://std-mysql.ist.mospolytech.ru:3306/std_2011_kurs",
+                    "std_2011_kurs", "std_2011_kurs");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
 }
 
