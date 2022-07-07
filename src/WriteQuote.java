@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class WriteQuote extends JDialog {
-    private JLabel l1 = new JLabel("Опубликовать цитату");
-    private JTextArea inputQuote = new JTextArea(5, 50);
+    private JLabel l1 = new JLabel("Напишите цитату");
+    private JTextArea inputQuote = new JTextArea(4, 30);
     private JButton buttonPost = new JButton("Опубликовать");
     private JButton buttonCancel = new JButton("Отмена");
     private boolean succeeded;
@@ -34,6 +34,7 @@ public class WriteQuote extends JDialog {
         Container container = this.getContentPane();
         GridBagLayout gbl = new GridBagLayout();
         container.setLayout(gbl);
+
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -42,7 +43,7 @@ public class WriteQuote extends JDialog {
         gbl.setConstraints(l1,c);
         container.add(l1);
 
-        GridBagConstraints a = new GridBagConstraints();
+        GridBagConstraints a = new GridBagConstraints();//текст цитаты
         a.gridx = 0;
         a.gridy = 1;
         a.gridwidth = 3;
@@ -50,7 +51,7 @@ public class WriteQuote extends JDialog {
         gbl.setConstraints(inputQuote,a);
         container.add(inputQuote);
 
-        GridBagConstraints b = new GridBagConstraints();
+        GridBagConstraints b = new GridBagConstraints(); //кнопка
         b.gridx = 0;
         b.gridy = 6;
         b.gridwidth = 1;
@@ -58,7 +59,7 @@ public class WriteQuote extends JDialog {
         gbl.setConstraints(buttonPost,b);
         container.add(buttonPost);
 
-        GridBagConstraints d = new GridBagConstraints();
+        GridBagConstraints d = new GridBagConstraints(); //кнопка
         d.gridx = 2;
         d.gridy = 6;
         d.gridwidth = 1;

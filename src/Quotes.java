@@ -5,9 +5,11 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class Quotes extends JFrame {
-    private JLabel l1 = new JLabel("Логин:");
-    private JLabel l2 = new JLabel("Роль:");
-    private JLabel l3 = new JLabel("Количество цитат:");
+    private JLabel Login = new JLabel("Логин:");
+    private JLabel Role = new JLabel("Роль:");
+    private JTextArea inputQuote = new JTextArea(6, 30);
+    //TODO заменить поле для текста(то что выше) на цитаты, которые опубликовали
+    private JLabel NumbQuotes = new JLabel("Количество цитат:");
     private JButton buttonWrite = new JButton("Написать цитату");
     private JButton buttonChange = new JButton("Изменить регистрационные данные");
     private JFrame self;
@@ -37,12 +39,56 @@ public class Quotes extends JFrame {
         });
 
         Container container = this.getContentPane();
-        container.setLayout(new GridLayout(5, 2, 2, 2));
-        container.add(l1);
-        container.add(l2);
-        container.add(l3);
+        GridBagLayout gbl = new GridBagLayout();
+        container.setLayout(gbl);
+
+        GridBagConstraints c = new GridBagConstraints();//логин
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        gbl.setConstraints(Login,c);
+        container.add(Login);
+
+        GridBagConstraints a = new GridBagConstraints();//роль
+        a.gridx = 0;
+        a.gridy = 1;
+        a.gridwidth = 1;
+        a.gridheight = 1;
+        gbl.setConstraints(Role,a);
+        container.add(Role);
+
+        GridBagConstraints b = new GridBagConstraints(); //кол-во цитат
+        b.gridx = 0;
+        b.gridy = 2;
+        b.gridwidth = 1;
+        b.gridheight = 1;
+        gbl.setConstraints(NumbQuotes,b);
+        container.add(NumbQuotes);
+
+        GridBagConstraints d = new GridBagConstraints(); //кнопка написать
+        d.gridx = 0;
+        d.gridy = 3;
+        d.gridwidth = 1;
+        d.gridheight = 1;
+        gbl.setConstraints(buttonWrite,d);
         container.add(buttonWrite);
+
+        GridBagConstraints e = new GridBagConstraints(); //кнопка написать
+        e.gridx = 0;
+        e.gridy = 4;
+        e.gridwidth = 1;
+        e.gridheight = 1;
+        gbl.setConstraints(buttonChange,e);
         container.add(buttonChange);
+
+        GridBagConstraints f = new GridBagConstraints();//цитаты
+        f.gridx = 1;
+        f.gridy = 0;
+        f.gridwidth = 3;
+        f.gridheight = 5;
+        gbl.setConstraints(inputQuote,f);
+        container.add(inputQuote);
 
     }
 
