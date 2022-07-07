@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 public class Login extends JDialog {
     private JLabel l1 = new JLabel("Логин");
@@ -12,10 +13,12 @@ public class Login extends JDialog {
     private JButton buttonReg = new JButton("Регистрация");
     private JButton buttonGuest = new JButton("Войти как гость");
     private boolean succeeded;
+    private Connection connection;
 
-    public Login(Frame parent) throws HeadlessException {
+    public Login(Frame parent, Connection connection) throws HeadlessException {
         super(parent, "Авторизация", true);
         this.setBounds(150, 150, 350, 200);
+        this.connection = connection;
 
         buttonOK.addActionListener(new ActionListener() { //нажимаешь на "ок"
             // и перебрасывает в окно с цитатами
@@ -39,7 +42,7 @@ public class Login extends JDialog {
             // в окно для регистрации
             @Override
             public void actionPerformed(ActionEvent e) {
-                Registration reg = new Registration(parent);
+                Registration reg = new Registration(parent, connection);
                 reg.setVisible(true);
             }
         });

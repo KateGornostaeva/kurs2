@@ -98,7 +98,7 @@ public class Quotes extends JFrame {
         ResultSet resultSet = preparedStatement.executeQuery();
         System.out.println("");
 
-        Login login = new Login(this);
+        Login login = new Login(this, connection);
         login.setVisible(true);
     }
 
