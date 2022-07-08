@@ -1,8 +1,13 @@
+import entity.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Login extends JDialog {
     private JLabel l1 = new JLabel("Логин");
@@ -12,8 +17,9 @@ public class Login extends JDialog {
     private JButton buttonOK = new JButton("OK");
     private JButton buttonReg = new JButton("Регистрация");
     private JButton buttonGuest = new JButton("Войти как гость");
-    private boolean succeeded;
+    private boolean succeeded = false;
     private Connection connection;
+    private User user;
 
     public Login(Frame parent, Connection connection) throws HeadlessException {
         super(parent, "Авторизация", true);
@@ -24,9 +30,23 @@ public class Login extends JDialog {
             // и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO проверить авторизацию
-                succeeded = true;
-                dispose();
+                try { //проверяет есть ли уже такой пользователь
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE login = ? AND hash_pass = ?");
+                    statement.setString(1, inputLogin.getText());
+                    statement.setString(2,inputPassword.getText());
+                    ResultSet resultSet = statement.executeQuery();
+                    if (resultSet.next()) { //если логин и пароль верны, то перебрасывает в окно с цитатами
+                        user = new User(resultSet);
+                        succeeded = true;
+                        dispose();
+                        return;
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                succeeded = false;
+                JOptionPane.showMessageDialog(null, "Неверный логин или пароль");
+                return;
             }
         });
         buttonGuest.addActionListener(new ActionListener() {//нажимаешь на "войти как гость"
@@ -60,5 +80,9 @@ public class Login extends JDialog {
 
     public boolean isSucceeded() { //проверка получилось ли авторизироватся
         return succeeded;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

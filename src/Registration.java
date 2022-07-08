@@ -30,20 +30,20 @@ public class Registration extends JDialog {
             // и перебрасывает в окно с авторизацией
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (inputPassword.getText().isEmpty() || inputGroup.getText().isEmpty() || inputLogin.getText().isEmpty()){
+            //если нет логина или пароля или группы, то выводит текст
+                if (inputPassword.getText().isEmpty() || inputGroup.getText().isEmpty() || inputLogin.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Проверьте данные");
                     return;
                 }
 
-                try {
+                try { //проверяет есть ли уже такой пользователь
                     PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE login = ?");
                     statement.setString(1, inputLogin.getText());
                     ResultSet resultSet = statement.executeQuery();
                     if (resultSet.next()) {
                         JOptionPane.showMessageDialog(null, "Такой пользователь уже существует");
                         return;
-                    }
+                    }//если такого пользователя нет, то сохраняет в БД
                     User user = new User();
                     user.setLogin(inputLogin.getText());
                     user.setHash_pass(inputPassword.getText());
