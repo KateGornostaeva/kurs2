@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class WriteQuote extends JDialog {
-    private JLabel l1 = new JLabel("Напишите цитату");
+    private JLabel writeQuote = new JLabel("Напишите цитату");
     private JTextArea inputQuote = new JTextArea(4, 30);
     private JButton buttonPost = new JButton("Опубликовать");
     private JButton buttonCancel = new JButton("Отмена");
@@ -36,12 +36,12 @@ public class WriteQuote extends JDialog {
         container.setLayout(gbl);
 
         GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gbl.setConstraints(l1,c);
-        container.add(l1);
+        c.gridx = 1;//номер столбца и
+        c.gridy = 0;// номер строки для ячейки
+        c.gridwidth = 1;//количество ячеек,
+        c.gridheight = 1;//занимаемых добавляемым компонентом
+        gbl.setConstraints(writeQuote,c);
+        container.add(writeQuote);
 
         GridBagConstraints a = new GridBagConstraints();//текст цитаты
         a.gridx = 0;

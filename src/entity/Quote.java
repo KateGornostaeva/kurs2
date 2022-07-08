@@ -42,6 +42,7 @@ public class Quote {
         this.id = id;
     }
 
+    //для получения значения поля класса и его изменения
     public String getQuote() {
         return quote;
     }

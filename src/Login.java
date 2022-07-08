@@ -10,8 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Login extends JDialog {
-    private JLabel l1 = new JLabel("Логин");
-    private JLabel l2 = new JLabel("Пароль");
+    private JLabel login = new JLabel("Логин");
+    private JLabel password = new JLabel("Пароль");
     private JTextField inputLogin = new JTextField("", 10);
     private JTextField inputPassword = new JTextField("", 10);
     private JButton buttonOK = new JButton("OK");
@@ -69,9 +69,9 @@ public class Login extends JDialog {
 
         Container container = this.getContentPane();
         container.setLayout(new GridLayout(4, 2, 2, 2));
-        container.add(l1);
+        container.add(login);
         container.add(inputLogin);
-        container.add(l2);
+        container.add(password);
         container.add(inputPassword);
         container.add(buttonOK);
         container.add(buttonReg);

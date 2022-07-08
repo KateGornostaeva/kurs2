@@ -12,7 +12,7 @@ public class User {
     private Integer groupe;
     private String role;
 
-    public User(){
+    public User() {
 
     }
 
@@ -34,6 +34,7 @@ public class User {
         preparedStatement.executeUpdate();
     }
 
+    //для получения значения поля класса и его изменения
     public Integer getId() {
         return id;
     }

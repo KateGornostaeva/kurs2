@@ -10,9 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Registration extends JDialog {
-    private JLabel l1 = new JLabel("Введите логин");
-    private JLabel l2 = new JLabel("Введите пароль");
-    private JLabel l3 = new JLabel("Введите группу");
+    private JLabel writeLogin = new JLabel("Введите логин");
+    private JLabel writePassword = new JLabel("Введите пароль");
+    private JLabel writeGroup = new JLabel("Введите группу");
     private JTextField inputLogin = new JTextField("", 10);
     private JTextField inputPassword = new JTextField("", 10);
     private JTextField inputGroup = new JTextField("", 10);
@@ -68,11 +68,11 @@ public class Registration extends JDialog {
         });
         Container container = this.getContentPane();
         container.setLayout(new GridLayout(7, 1, 2, 2));
-        container.add(l1);
+        container.add(writeLogin);
         container.add(inputLogin);
-        container.add(l2);
+        container.add(writePassword);
         container.add(inputPassword);
-        container.add(l3);
+        container.add(writeGroup);
         container.add(inputGroup);
         container.add(buttonOK);
         container.add(buttonCancel);
