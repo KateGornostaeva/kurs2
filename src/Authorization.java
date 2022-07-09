@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Login extends JDialog {
+public class Authorization extends JDialog {
     private JLabel login = new JLabel("Логин");
     private JLabel password = new JLabel("Пароль");
     private JTextField inputLogin = new JTextField("", 10);
@@ -21,7 +21,7 @@ public class Login extends JDialog {
     private Connection connection;
     private User user;
 
-    public Login(Frame parent, Connection connection) throws HeadlessException {
+    public Authorization(Frame parent, Connection connection) throws HeadlessException {
         super(parent, "Авторизация", true);
         this.setBounds(150, 150, 350, 200);
         this.connection = connection;
@@ -33,7 +33,7 @@ public class Login extends JDialog {
                 try { //проверяет есть ли уже такой пользователь
                     PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE login = ? AND hash_pass = ?");
                     statement.setString(1, inputLogin.getText());
-                    statement.setString(2,inputPassword.getText());
+                    statement.setString(2, inputPassword.getText());
                     ResultSet resultSet = statement.executeQuery();
                     if (resultSet.next()) { //если логин и пароль верны, то перебрасывает в окно с цитатами
                         user = new User(resultSet);
@@ -49,15 +49,20 @@ public class Login extends JDialog {
                 return;
             }
         });
+
         buttonGuest.addActionListener(new ActionListener() {//нажимаешь на "войти как гость"
             // и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO проверить авторизацию
+                user = new User();
+                user.setFunction("2");
+                user.setRole("GUEST");
                 succeeded = true;
                 dispose();
+                return;
             }
         });
+
         buttonReg.addActionListener(new ActionListener() {//нажимаешь на "регистрацию" и перебрасывает
             // в окно для регистрации
             @Override

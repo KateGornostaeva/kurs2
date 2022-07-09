@@ -48,6 +48,7 @@ public class Registration extends JDialog {
                     user.setLogin(inputLogin.getText());
                     user.setHash_pass(inputPassword.getText());
                     user.setRole("USER");
+                    user.setFunction("1,2,3,4");
                     user.setGroupe(Integer.valueOf(inputGroup.getText()));
                     user.save(connection);
 

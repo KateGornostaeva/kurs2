@@ -11,6 +11,7 @@ public class User {
     private String hash_pass;
     private Integer groupe;
     private String role;
+    private String function;
 
     public User() {
 
@@ -22,15 +23,17 @@ public class User {
         hash_pass = resultSet.getString("hash_pass");
         groupe = resultSet.getInt("groupe");
         role = resultSet.getString("role");
+        function = resultSet.getString("function");
     }
 
     public void save(Connection connection) throws SQLException {//сохраняет в БД пользователей
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "INSERT INTO users(login,hash_pass, groupe, role) values(?,?,?,?)");
+                "INSERT INTO users(login,hash_pass, groupe, role, function) values(?,?,?,?,?)");
         preparedStatement.setString(1, login);
         preparedStatement.setString(2, hash_pass);
         preparedStatement.setInt(3, groupe);
         preparedStatement.setString(4, role);
+        preparedStatement.setString(5, function);
         preparedStatement.executeUpdate();
     }
 
@@ -73,5 +76,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        this.function = function;
     }
 }

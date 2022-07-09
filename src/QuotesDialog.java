@@ -105,10 +105,10 @@ public class QuotesDialog extends JFrame {
         ResultSet resultSet = preparedStatement.executeQuery();
         System.out.println("");
 
-        Login login = new Login(this, connection);
-        login.setVisible(true);
-        if (login.isSucceeded()) {
-            user = login.getUser();
+        Authorization authorization = new Authorization(this, connection);
+        authorization.setVisible(true);
+        if (authorization.isSucceeded()) {
+            user = authorization.getUser();
         } else {
             user = new User();
             user.setRole("GUEST");
