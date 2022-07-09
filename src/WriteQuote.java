@@ -20,7 +20,7 @@ public class WriteQuote extends JDialog {
 
     public WriteQuote(Frame parent) throws HeadlessException {
         super(parent, "Публикация цитаты", true);
-        this.setBounds(200, 200, 650, 400);
+        this.setBounds(200, 200, 550, 400);
 
         buttonPost.addActionListener(new ActionListener() {//нажимаешь на "опубликовать"
             // и перебрасывает в окно с цитатами
@@ -29,9 +29,10 @@ public class WriteQuote extends JDialog {
                 Quote quote = new Quote();
                 quote.setQuote(inputQuote.getText());
                 quote.setData(Date.valueOf(LocalDate.now()));//текущее время ставит
-                // quote.;
-                succeeded = true;
+                quote.setSubject(inputSubject.getText());
+                quote.setTeacher(inputTeacher.getText());
                 dispose();
+                return;
             }
         });
         buttonCancel.addActionListener(new ActionListener() {//нажимаешь на "отмена"
