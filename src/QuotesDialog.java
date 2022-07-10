@@ -2,6 +2,8 @@ import entity.Quote;
 import entity.User;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuotesDialog extends JFrame {
-    private JLabel Login = new JLabel("Логин:");
-    private JLabel Role = new JLabel("Роль:");
+    private JLabel login = new JLabel("Логин:");
+    private JLabel role = new JLabel("Роль:");
     private JTextArea inputQuote = new JTextArea(6, 30);
-    //TODO заменить поле для текста(то что выше) на цитаты, которые опубликовали
-    private JLabel NumbQuotes = new JLabel("Количество цитат:");
+    private JLabel numbQuotes = new JLabel("Количество цитат:");
     private JButton buttonWrite = new JButton("Написать цитату");
     private JButton buttonChange = new JButton("Изменить регистрационные данные");
     private JFrame self;
@@ -24,8 +25,9 @@ public class QuotesDialog extends JFrame {
     private Connection connection;
     private Container container;
     private GridBagLayout gbl;
+    private JTable table;
 
-    public QuotesDialog() throws HeadlessException {
+    public QuotesDialog() throws HeadlessException, SQLException {
         super("Основное");
         self = this; //для проброса this в анонимный класс
         this.setBounds(90, 90, 750, 550);
@@ -35,16 +37,24 @@ public class QuotesDialog extends JFrame {
             // и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
-                ChangeRegData changeRegData = new ChangeRegData(self, user, connection);
-                changeRegData.setVisible(true);
+                if (user.getFunction().contains("3")) {
+                    ChangeRegData changeRegData = new ChangeRegData(self, user, connection);
+                    changeRegData.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Вы не зарегистрированы в системе");
+                }
             }
         });
         buttonWrite.addActionListener(new ActionListener() {//нажимаешь на "написать цитату"
             // и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
-                WriteQuote writeQuote = new WriteQuote(self);
-                writeQuote.setVisible(true);
+                if (user.getFunction().contains("1")) {
+                    WriteQuote writeQuote = new WriteQuote(self, user, connection);
+                    writeQuote.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "У вас нет прав на создание цитат");
+                }
             }
         });
 
@@ -58,8 +68,8 @@ public class QuotesDialog extends JFrame {
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        gbl.setConstraints(Login, c);
-        container.add(Login);
+        gbl.setConstraints(login, c);
+        container.add(login);
 
         GridBagConstraints a = new GridBagConstraints();//роль
         a.anchor = GridBagConstraints.WEST;
@@ -67,8 +77,8 @@ public class QuotesDialog extends JFrame {
         a.gridy = 1;
         a.gridwidth = 1;
         a.gridheight = 1;
-        gbl.setConstraints(Role, a);
-        container.add(Role);
+        gbl.setConstraints(role, a);
+        container.add(role);
 
         GridBagConstraints b = new GridBagConstraints(); //кол-во цитат
         b.anchor = GridBagConstraints.WEST;
@@ -76,8 +86,8 @@ public class QuotesDialog extends JFrame {
         b.gridy = 2;
         b.gridwidth = 1;
         b.gridheight = 1;
-        gbl.setConstraints(NumbQuotes, b);
-        container.add(NumbQuotes);
+        gbl.setConstraints(numbQuotes, b);
+        container.add(numbQuotes);
 
         GridBagConstraints d = new GridBagConstraints(); //кнопка написать
         d.gridx = 0;
@@ -96,15 +106,61 @@ public class QuotesDialog extends JFrame {
         gbl.setConstraints(buttonChange, e);
         container.add(buttonChange);
 
+        connection = getConnection();
+        List<Quote> quoteList = getQuotes();
+        GridBagConstraints f = new GridBagConstraints();//цитаты
+        f.gridx = 1;
+        f.gridy = 0;
+        f.gridwidth = 3;
+        f.gridheight = 5;
+        TableModel tableModel = new MyTableModel(quoteList);
+        table = new JTable(tableModel);
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {// если нажали на строчку в таблице то
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = table.getSelectedRow();
+                Integer u_id = (Integer) table.getValueAt(row, 5);
+                if ((u_id == user.getId() && user.getFunction().contains("3")) || user.getRole().equals("SUPER")) {
+                    try {
+                        PreparedStatement pStatement = connection.prepareStatement("SELECT * FROM quote_teacher WHERE id = ?");
+                        pStatement.setInt(1, (Integer) table.getValueAt(row, 0));
+                        ResultSet rSet = pStatement.executeQuery();
+                        rSet.next();
+                        Quote quote = new Quote(rSet);
+                        WriteQuote writeQuote = new WriteQuote(self, user, connection, quote);
+                        writeQuote.setVisible(true);
+                        List<Quote> quoteList = getQuotes();
+                        TableModel tableModel = new MyTableModel(quoteList);
+                        table = new JTable(tableModel);
+                        table.validate();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "У вас нет прав на изменение цитат");
+                }
+            }
+        });
+        JScrollPane scrollPane = new JScrollPane(table);
+        gbl.setConstraints(scrollPane, f);
+        container.add(scrollPane);
+    }
 
+    private List<Quote> getQuotes() throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM quote_teacher ");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        List<Quote> quoteList = new ArrayList<>();
+        while (resultSet.next()) { //прочитали все цитаты и засунули их в лист
+            Quote quote = new Quote(resultSet);
+            quoteList.add(quote);
+        }
+        return quoteList;
     }
 
     public void start() throws SQLException {
-        connection = getConnection();
+
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         ResultSet resultSet = preparedStatement.executeQuery();
-        System.out.println("");
-
         Authorization authorization = new Authorization(this, connection);
         authorization.setVisible(true);
         if (authorization.isSucceeded()) {
@@ -113,24 +169,10 @@ public class QuotesDialog extends JFrame {
             user = new User();
             user.setRole("GUEST");
         }
-        preparedStatement = connection.prepareStatement("SELECT * FROM quote_teacher ");
-        resultSet = preparedStatement.executeQuery();
-        List<Quote> quoteList = new ArrayList<>();
-        while (resultSet.next()) { //прочитали все цитаты и засунули их в лист
-            Quote quote = new Quote(resultSet);
-            quoteList.add(quote);
-        }
-        GridBagConstraints f = new GridBagConstraints();//цитаты
-        f.gridx = 1;
-        f.gridy = 0;
-        f.gridwidth = 3;
-        f.gridheight = 5;
-        TableModel tableModel = new MyTableModel(quoteList);
-        JTable table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
-        gbl.setConstraints(scrollPane, f);
-        container.add(scrollPane);
-        scrollPane.repaint();
+        login.setText("Логин: " + user.getLogin());
+        role.setText("Роль: " + user.getRole());
+        numbQuotes.setText("Количество цитат: " + getCountQuote());
+
     }
 
     private Connection getConnection() { //подключение к БД
@@ -145,5 +187,31 @@ public class QuotesDialog extends JFrame {
         }
         return connection;
     }
+
+    public void deleteRow(Quote quote) {
+        MyTableModel model = (MyTableModel) table.getModel();
+        model.removeRow(quote);
+        table.repaint();
+    }
+
+    private int getCountQuote() throws SQLException { //считает количество цитат у текущего пользователя
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM `quote_teacher` WHERE id_user =?");
+        preparedStatement.setInt(1, user.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    private int getCountQuote2() throws SQLException { //второй способ подсчета цитат
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `quote_teacher` WHERE id_user =?");
+        preparedStatement.setInt(1, user.getId());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        int count = 0;
+        while (resultSet.next()) {
+            count++;
+        }
+        return count;
+    }
+
 }
 

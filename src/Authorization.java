@@ -57,6 +57,8 @@ public class Authorization extends JDialog {
                 user = new User();
                 user.setFunction("2");
                 user.setRole("GUEST");
+                user.setId(2);
+                user.setLogin("guest");
                 succeeded = true;
                 dispose();
                 return;

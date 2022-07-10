@@ -7,7 +7,7 @@ public class Quote {
     private String quote;
     private String teacher;
     private String subject;
-    private Date data;
+    private Date date;
     private Integer id_user;
 
     public Quote() {
@@ -19,18 +19,37 @@ public class Quote {
         quote = resultSet.getString("quote");
         teacher = resultSet.getString("teacher");
         subject = resultSet.getString("subject");
-        data = resultSet.getDate("data");
+        date = resultSet.getDate("date");
         id_user = resultSet.getInt("id_user");
     }
 
     public void save(Connection connection) throws SQLException {//сохраняет в БД
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "INSERT INTO quote_teacher(quote, teacher, subject, data, id_user) values(?,?,?,?,?)");
+                "INSERT INTO quote_teacher(quote, teacher, subject, date, id_user) values(?,?,?,?,?)");
         preparedStatement.setString(1, quote);
         preparedStatement.setString(2, teacher);
         preparedStatement.setString(3, subject);
-        preparedStatement.setDate(4, data);
+        preparedStatement.setDate(4, date);
         preparedStatement.setInt(5, id_user);
+        preparedStatement.executeUpdate();
+    }
+
+    public void update(Connection connection) throws SQLException {//изменяет в БД
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE quote_teacher SET quote = ?, teacher = ?, subject = ?, date = ?, id_user = ? WHERE id = ?");
+        preparedStatement.setString(1, quote);
+        preparedStatement.setString(2, teacher);
+        preparedStatement.setString(3, subject);
+        preparedStatement.setDate(4, date);
+        preparedStatement.setInt(5, id_user);
+        preparedStatement.setInt(6, id); //если не указать id, то обновится вся таблица, а не одна строчка
+        preparedStatement.executeUpdate();
+    }
+
+    public void delete(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "DELETE FROM quote_teacher  WHERE id = ?");
+        preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
     }
 
@@ -67,12 +86,12 @@ public class Quote {
         this.subject = subject;
     }
 
-    public Date getData() {
-        return data;
+    public Date getDate() {
+        return date;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Integer getId_user() {

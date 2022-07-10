@@ -1,10 +1,13 @@
 import entity.Quote;
+import entity.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class WriteQuote extends JDialog {
@@ -16,33 +19,76 @@ public class WriteQuote extends JDialog {
     private JTextArea inputSubject = new JTextArea(4, 30);
     private JButton buttonPost = new JButton("Опубликовать");
     private JButton buttonCancel = new JButton("Отмена");
-    private boolean succeeded;
+    private JButton buttonDelete = new JButton("Удалить цитату");
 
-    public WriteQuote(Frame parent) throws HeadlessException {
+
+    private Quote quote = new Quote();
+    private QuotesDialog parentQD;
+
+    public WriteQuote(Frame parent, User user, Connection connection, Quote quote) {
+        this(parent, user, connection);
+        this.quote = quote;
+        this.parentQD = (QuotesDialog) parent;
+        inputQuote.setText(quote.getQuote());
+        inputSubject.setText(quote.getSubject());
+        inputTeacher.setText(quote.getTeacher());
+
+    }
+
+    public WriteQuote(Frame parent, User user, Connection connection) throws HeadlessException {
         super(parent, "Публикация цитаты", true);
         this.setBounds(200, 200, 550, 400);
 
-        buttonPost.addActionListener(new ActionListener() {//нажимаешь на "опубликовать"
-            // и перебрасывает в окно с цитатами
+        buttonPost.addActionListener(new ActionListener() {//публикация и изменение цитат
+            //нажимаешь на "опубликовать" и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
-                Quote quote = new Quote();
                 quote.setQuote(inputQuote.getText());
-                quote.setData(Date.valueOf(LocalDate.now()));//текущее время ставит
+                quote.setDate(Date.valueOf(LocalDate.now()));//текущее время ставит
                 quote.setSubject(inputSubject.getText());
                 quote.setTeacher(inputTeacher.getText());
+                quote.setId_user(user.getId());
+                try {
+                    if (quote.getId() == null) {//id есть только у цитат которые уже были добавлены в БД, тк до этого мы его не ставим,
+                        //а только сама БД автоматически это делает. А, если у цитаты есть id, то мы можем ее изменить
+                        quote.save(connection);
+                    } else {
+                        quote.update(connection);
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
                 dispose();
-                return;
             }
         });
+
         buttonCancel.addActionListener(new ActionListener() {//нажимаешь на "отмена"
             // и перебрасывает в окно с цитатами
             @Override
             public void actionPerformed(ActionEvent e) {
-                succeeded = true;
                 dispose();
             }
         });
+
+        buttonDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (quote.getId() != null) {
+                        if ((user.getId() == quote.getId_user() && user.getFunction().contains("4")) || user.getRole().equals("SUPER")) {
+                            quote.delete(connection);
+                            parentQD.deleteRow(quote);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "У вас недостаточно прав");
+                        }
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                dispose();
+            }
+        });
+
         Container container = this.getContentPane();
         GridBagLayout gbl = new GridBagLayout();
         container.setLayout(gbl);
@@ -110,5 +156,17 @@ public class WriteQuote extends JDialog {
         d.gridheight = 1;
         gbl.setConstraints(buttonCancel, d);
         container.add(buttonCancel);
+
+        GridBagConstraints i = new GridBagConstraints();
+        i.gridx = 1;
+        i.gridy = 12;
+        i.gridwidth = 4;
+        i.gridheight = 1;
+        gbl.setConstraints(buttonDelete, i);
+        container.add(buttonDelete);
+    }
+
+    public Quote getQuote() {
+        return quote;
     }
 }

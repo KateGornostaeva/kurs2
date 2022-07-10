@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class ChangeRegData extends JDialog {
     private JLabel newLogin = new JLabel("Новый логин");
     private JLabel newPassword = new JLabel("Новый пароль");
-    private JLabel Group = new JLabel("Группа");
+    private JLabel group = new JLabel("Группа");
     private JTextField inputLogin = new JTextField("", 10);
     private JTextField inputPassword = new JTextField("", 10);
     private JTextField inputGroup = new JTextField("", 10);
@@ -87,8 +87,8 @@ public class ChangeRegData extends JDialog {
         e.gridy = 4;
         e.gridwidth = 1;
         e.gridheight = 1;
-        gbl.setConstraints(Group, e);
-        container.add(Group);
+        gbl.setConstraints(group, e);
+        container.add(group);
 
         GridBagConstraints f = new GridBagConstraints();
         f.gridx = GridBagConstraints.CENTER;
