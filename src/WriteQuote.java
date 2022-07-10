@@ -24,6 +24,7 @@ public class WriteQuote extends JDialog {
 
     private Quote quote = new Quote();
     private QuotesDialog parentQD;
+    private Connection connection;
 
     public WriteQuote(Frame parent, User user, Connection connection, Quote quote) {
         this(parent, user, connection);
@@ -37,6 +38,7 @@ public class WriteQuote extends JDialog {
 
     public WriteQuote(Frame parent, User user, Connection connection) throws HeadlessException {
         super(parent, "Публикация цитаты", true);
+        this.connection = connection;
         this.setBounds(200, 200, 550, 400);
 
         buttonPost.addActionListener(new ActionListener() {//публикация и изменение цитат

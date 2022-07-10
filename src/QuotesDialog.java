@@ -119,25 +119,30 @@ public class QuotesDialog extends JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int row = table.getSelectedRow();
-                Integer u_id = (Integer) table.getValueAt(row, 5);
-                if ((u_id == user.getId() && user.getFunction().contains("3")) || user.getRole().equals("SUPER")) {
-                    try {
-                        PreparedStatement pStatement = connection.prepareStatement("SELECT * FROM quote_teacher WHERE id = ?");
-                        pStatement.setInt(1, (Integer) table.getValueAt(row, 0));
-                        ResultSet rSet = pStatement.executeQuery();
-                        rSet.next();
-                        Quote quote = new Quote(rSet);
+                try {
+                    PreparedStatement pStatement = connection.prepareStatement("SELECT * FROM quote_teacher WHERE id = ?");
+                    pStatement.setInt(1, (Integer) table.getValueAt(row, 0));
+                    ResultSet rSet = pStatement.executeQuery();
+                    rSet.next();
+                    Quote quote = new Quote(rSet);
+                    Integer u_id = (Integer) table.getValueAt(row, 5);
+                    if (
+                            (u_id == user.getId() && (user.getFunction().contains("3") && user.getFunction().contains("4")))
+                                    || user.getRole().equals("SUPER")
+                                    || (user.getRole().equals("VERIFICATOR") && checkVerification(user.getGroupe(), quote))
+                    ) {
+
                         WriteQuote writeQuote = new WriteQuote(self, user, connection, quote);
                         writeQuote.setVisible(true);
                         List<Quote> quoteList = getQuotes();
                         TableModel tableModel = new MyTableModel(quoteList);
                         table = new JTable(tableModel);
                         table.validate();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "У вас нет прав на изменение цитат");
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "У вас нет прав на изменение цитат");
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
                 }
             }
         });
@@ -212,6 +217,18 @@ public class QuotesDialog extends JFrame {
         }
         preparedStatement.close();
         return count;
+    }
+
+    private boolean checkVerification(int group, Quote quote) throws SQLException {
+        //ищет автора цитаты и сравнивает его группу с группой верификатора
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE id = ?");
+        preparedStatement.setInt(1, quote.getId_user());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        User user = new User(resultSet);
+        boolean result = group == user.getGroupe();
+        preparedStatement.close();
+        return result;
     }
 }
 
