@@ -32,6 +32,7 @@ public class Quote {
         preparedStatement.setDate(4, date);
         preparedStatement.setInt(5, id_user);
         preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
     public void update(Connection connection) throws SQLException {//изменяет в БД
@@ -44,6 +45,7 @@ public class Quote {
         preparedStatement.setInt(5, id_user);
         preparedStatement.setInt(6, id); //если не указать id, то обновится вся таблица, а не одна строчка
         preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
     public void delete(Connection connection) throws SQLException {
@@ -51,6 +53,7 @@ public class Quote {
                 "DELETE FROM quote_teacher  WHERE id = ?");
         preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
     public Integer getId() {

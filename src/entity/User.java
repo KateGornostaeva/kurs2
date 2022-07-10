@@ -35,6 +35,7 @@ public class User {
         preparedStatement.setString(4, role);
         preparedStatement.setString(5, function);
         preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
     //для получения значения поля класса и его изменения

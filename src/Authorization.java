@@ -39,6 +39,7 @@ public class Authorization extends JDialog {
                         user = new User(resultSet);
                         succeeded = true;
                         dispose();
+                        statement.close();
                         return;
                     }
                 } catch (SQLException ex) {

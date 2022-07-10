@@ -154,13 +154,11 @@ public class QuotesDialog extends JFrame {
             Quote quote = new Quote(resultSet);
             quoteList.add(quote);
         }
+        preparedStatement.close();
         return quoteList;
     }
 
     public void start() throws SQLException {
-
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        ResultSet resultSet = preparedStatement.executeQuery();
         Authorization authorization = new Authorization(this, connection);
         authorization.setVisible(true);
         if (authorization.isSucceeded()) {
@@ -199,7 +197,9 @@ public class QuotesDialog extends JFrame {
         preparedStatement.setInt(1, user.getId());
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
-        return resultSet.getInt(1);
+        int result = resultSet.getInt(1);
+        preparedStatement.close();
+        return result;
     }
 
     private int getCountQuote2() throws SQLException { //второй способ подсчета цитат
@@ -210,8 +210,8 @@ public class QuotesDialog extends JFrame {
         while (resultSet.next()) {
             count++;
         }
+        preparedStatement.close();
         return count;
     }
-
 }
 

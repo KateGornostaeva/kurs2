@@ -42,6 +42,7 @@ public class Registration extends JDialog {
                     ResultSet resultSet = statement.executeQuery();
                     if (resultSet.next()) {
                         JOptionPane.showMessageDialog(null, "Такой пользователь уже существует");
+                        statement.close();
                         return;
                     }//если такого пользователя нет, то сохраняет в БД
                     User user = new User();
