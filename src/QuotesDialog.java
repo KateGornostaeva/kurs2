@@ -120,7 +120,8 @@ public class QuotesDialog extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 int row = table.getSelectedRow();
                 try {
-                    PreparedStatement pStatement = connection.prepareStatement("SELECT * FROM quote_teacher WHERE id = ?");
+                    PreparedStatement pStatement = connection.prepareStatement(
+                            "SELECT * FROM quote_teacher JOIN users ON users.id = quote_teacher.id_user WHERE quote_teacher.id = ?");
                     pStatement.setInt(1, (Integer) table.getValueAt(row, 0));
                     ResultSet rSet = pStatement.executeQuery();
                     rSet.next();
@@ -135,9 +136,11 @@ public class QuotesDialog extends JFrame {
                         WriteQuote writeQuote = new WriteQuote(self, user, connection, quote);
                         writeQuote.setVisible(true);
                         List<Quote> quoteList = getQuotes();
-                        TableModel tableModel = new MyTableModel(quoteList);
-                        table = new JTable(tableModel);
-                        table.validate();
+                        MyTableModel model = (MyTableModel) table.getModel();
+                        model.setQuotes(quoteList);
+                        model.fireTableDataChanged();
+                        //model.fireTableRowsInserted(quoteList.size()+1, quoteList.size()+1);
+                        model.fireTableRowsDeleted(row, row);
                     } else {
                         JOptionPane.showMessageDialog(null, "У вас нет прав на изменение цитат");
                     }
@@ -152,7 +155,8 @@ public class QuotesDialog extends JFrame {
     }
 
     private List<Quote> getQuotes() throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM quote_teacher ");
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * FROM quote_teacher JOIN users ON users.id = quote_teacher.id_user");
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Quote> quoteList = new ArrayList<>();
         while (resultSet.next()) { //прочитали все цитаты и засунули их в лист

@@ -1,13 +1,13 @@
 import entity.Quote;
 
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MyTableModel implements TableModel {
+public class MyTableModel extends AbstractTableModel {
 
     private Set<TableModelListener> listeners = new HashSet<>();
 
@@ -65,7 +65,7 @@ public class MyTableModel implements TableModel {
             case 4:
                 return quote.getDate();
             case 5:
-                return quote.getId_user();
+                return quote.getLogin();
         }
         return "";
     }
@@ -104,5 +104,13 @@ public class MyTableModel implements TableModel {
 
     public void removeRow(Quote quote) {
         quotes.remove(quote);
+    }
+
+    public List<Quote> getQuotes() {
+        return quotes;
+    }
+
+    public void setQuotes(List<Quote> quotes) {
+        this.quotes = quotes;
     }
 }

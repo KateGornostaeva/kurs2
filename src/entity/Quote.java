@@ -9,6 +9,7 @@ public class Quote {
     private String subject;
     private Date date;
     private Integer id_user;
+    private String login;
 
     public Quote() {
 
@@ -21,6 +22,7 @@ public class Quote {
         subject = resultSet.getString("subject");
         date = resultSet.getDate("date");
         id_user = resultSet.getInt("id_user");
+        login = resultSet.getString("login");
     }
 
     public void save(Connection connection) throws SQLException {//сохраняет в БД
@@ -103,6 +105,14 @@ public class Quote {
 
     public void setId_user(Integer id_user) {
         this.id_user = id_user;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 }
 
