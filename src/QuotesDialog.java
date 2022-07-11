@@ -4,6 +4,7 @@ import entity.User;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -126,7 +127,7 @@ public class QuotesDialog extends JFrame {
                     ResultSet rSet = pStatement.executeQuery();
                     rSet.next();
                     Quote quote = new Quote(rSet);
-                    Integer u_id = (Integer) table.getValueAt(row, 5);
+                    Integer u_id = quote.getId_user();
                     if (
                             (u_id == user.getId() && (user.getFunction().contains("3") && user.getFunction().contains("4")))
                                     || user.getRole().equals("SUPER")
@@ -138,14 +139,12 @@ public class QuotesDialog extends JFrame {
                         List<Quote> quoteList = getQuotes();
                         MyTableModel model = (MyTableModel) table.getModel();
                         model.setQuotes(quoteList);
-                        model.fireTableDataChanged();
-                        //model.fireTableRowsInserted(quoteList.size()+1, quoteList.size()+1);
-                        model.fireTableRowsDeleted(row, row);
+                        model.fireTableChanged(new TableModelEvent(model));//перерисовывает таблицу при изменении данных
                     } else {
                         JOptionPane.showMessageDialog(null, "У вас нет прав на изменение цитат");
                     }
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
